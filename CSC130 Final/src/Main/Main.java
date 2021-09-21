@@ -1,6 +1,8 @@
 package Main;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+
 import logic.Control;
 
 public class Main{
@@ -22,8 +24,15 @@ public class Main{
 	/* This is your access to the "game loop" (It is a "callback" method from the Control class (do NOT modify that class!))*/
 	public static void update(Control ctrl) {
 		// TODO: This is where you can code! (Starting code below is just to show you how it works)
-		ctrl.addSpriteToFrontBuffer(0, 0, "f0");						 				// Add a tester sprite to render list by tag (Remove later! Test only!)
-		ctrl.drawString(20, 150, "This is a test graphics string!", Color.WHITE);		// Test drawing text on screen where you want (Remove later! Test only!)
+		int displayWidth = 1280;
+		int displayHeight = 720;
+		//int displayWidth = (int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+		//int displayHeight = (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+		
+		Color customColor = new Color(0,200,255);
+		
+		ctrl.addSpriteToFrontBuffer((displayWidth/2)-64, displayHeight-170, "f0");						 				// Add a tester sprite to render list by tag (Remove later! Test only!)
+		ctrl.drawString((displayWidth/2)-180, displayHeight-20, "Kenneth Munk says 'Hi'", customColor);		// Test drawing text on screen where you want (Remove later! Test only!)
 	}
 	
 	// Additional Static methods below...(if needed)
