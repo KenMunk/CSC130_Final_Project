@@ -4,10 +4,11 @@ import java.awt.Color;
 //import java.awt.Toolkit;
 
 import logic.Control;
+import timer.stopWatchX;
 
 public class Main{
 	// Fields (Static) below...
-	
+	public static stopWatchX frameTimer = new stopWatchX(12);
 	// End Static fields...
 	
 	public static void main(String[] args) {
@@ -34,7 +35,11 @@ public class Main{
 		ctrl.addSpriteToFrontBuffer((displayWidth/2)-64, displayHeight-170, "f0");						 				// Add a tester sprite to render list by tag (Remove later! Test only!)
 		ctrl.drawString((displayWidth/2)-180, displayHeight-20, "Kenneth Munk says 'Hi'", customColor);		// Test drawing text on screen where you want (Remove later! Test only!)
 		
-		
+		if(frameTimer.isTimeUp()) {
+			
+			
+			
+		}
 		
 		
 		

@@ -1,1 +1,17 @@
 Art/f.png*f0
+Art/BirdSpriteMap-00.png*b00
+Art/BirdSpriteMap-01.png*b01
+Art/BirdSpriteMap-02.png*b02
+Art/BirdSpriteMap-03.png*b03
+Art/BirdSpriteMap-04.png*b04
+Art/BirdSpriteMap-05.png*b05
+Art/BirdSpriteMap-06.png*b06
+Art/BirdSpriteMap-07.png*b07
+Art/BirdSpriteMap-08.png*b08
+Art/BirdSpriteMap-09.png*b09
+Art/BirdSpriteMap-10.png*b10
+Art/BirdSpriteMap-11.png*b11
+Art/BirdSpriteMap-12.png*b12
+Art/BirdSpriteMap-13.png*b13
+Art/BirdSpriteMap-14.png*b14
+Art/BirdSpriteMap-15.png*b15
