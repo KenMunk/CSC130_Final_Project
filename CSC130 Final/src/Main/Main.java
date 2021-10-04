@@ -33,6 +33,11 @@ public class Main{
 		
 		ctrl.addSpriteToFrontBuffer((displayWidth/2)-64, displayHeight-170, "f0");						 				// Add a tester sprite to render list by tag (Remove later! Test only!)
 		ctrl.drawString((displayWidth/2)-180, displayHeight-20, "Kenneth Munk says 'Hi'", customColor);		// Test drawing text on screen where you want (Remove later! Test only!)
+		
+		
+		
+		
+		
 	}
 	
 	// Additional Static methods below...(if needed)
