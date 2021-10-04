@@ -1,7 +1,7 @@
 package Main;
 
 import java.awt.Color;
-import java.awt.Toolkit;
+//import java.awt.Toolkit;
 
 import logic.Control;
 
