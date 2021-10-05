@@ -2,19 +2,22 @@ package Characters;
 
 import Data.Vector2D;
 import logic.Control;
+import Characters.SpriteData;
 
 public class MovableSprite {
 	
 	private int currentFrame;
+	private int frames;
 	private String[] spriteArray;
 	private Vector2D spritePosition;
 	
-	private Control existingControl;
-	
-	public void movableSprite(String[] spriteArray, Vector2D spritePosition, Control existingControl) {
+	public MovableSprite(String[] spriteArray, int frameCount, Vector2D spritePosition) {
 		
 		String[] temp = spriteArray;
 		this.spriteArray = temp;
+		
+		int tempCount = frameCount;
+		this.frames = tempCount;
 		
 		Vector2D tempPositon = spritePosition;
 		this.spritePosition = new Vector2D(tempPositon.getX(), tempPositon.getY());
@@ -25,14 +28,13 @@ public class MovableSprite {
 	
 	public void nextFrame(boolean timer) {
 		if(timer) {
-			this.currentFrame = (this.currentFrame + 1) % this.spriteArray.length;
+			this.currentFrame = (this.currentFrame + 1) % this.frames;
 		}
 	}
 	
-	public void renderFrame() {
+	public SpriteData renderFrame() {
 		
-
-		this.existingControl.addSpriteToFrontBuffer(this.spritePosition.getX(), this.spritePosition.getY(), this.spriteArray[this.currentFrame]);
+		return(new SpriteData(new Vector2D(this.spritePosition.getX(), this.spritePosition.getY()), this.spriteArray[this.currentFrame]));
 		
 	}
 	

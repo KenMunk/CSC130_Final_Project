@@ -15,6 +15,11 @@ public class Vector2D {
 		this.y = tempY;
 	}
 	
+	public Vector2D(Vector2D source) {
+		this.setX(source.getX());
+		this.setY(source.getY());
+	}
+	
 	// Methods
 	private int getValue(int value) {
 		int temp = value;
@@ -43,5 +48,24 @@ public class Vector2D {
 	
 	public void adjustY(int adjustment){
 		this.y += adjustment;
+	}
+	
+	public void adjust(Vector2D adjustment) {
+		
+		this.adjustX(adjustment.getX());
+		this.adjustY(adjustment.getY());
+		
+	}
+	
+	public Vector2D difference(Vector2D next) {
+		
+		Vector2D output = new Vector2D(this.getX() - next.getX(), this.getY() - next.getY());
+		
+		return(output);
+		
+	}
+	
+	public Vector2D stepsFor(int steps) {
+		return(new Vector2D(this.getX()/steps,this.getY()/steps));
 	}
 }
