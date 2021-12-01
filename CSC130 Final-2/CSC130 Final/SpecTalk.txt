@@ -1,0 +1,5 @@
+line1*DodoSpec:'I am the great dodo Spec'
+line2*DodoSpec:'Thine feathers are brown'
+line3*DodoSpec:'Thine legs are orange'
+line4*DodoSpec:'Thine image quality is garbage'
+line5*DodoSpec:'Thine purpose is for naught'

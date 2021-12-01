@@ -1,0 +1,9 @@
+Art/f.png*f0
+Art/SpecWalker--00.png*d0
+Art/SpecWalker--01.png*d1
+Art/SpecWalker--02.png*d2
+Art/SpecWalker--03.png*d3
+Art/SpecWalker--04.png*d4
+Art/SpecWalker--05.png*d5
+Art/SpecWalker--06.png*d6
+Art/SpecWalker--07.png*d7
