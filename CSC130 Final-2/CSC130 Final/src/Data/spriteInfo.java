@@ -2,7 +2,7 @@
 
 package Data;
 
-public class spriteInfo {
+public class SpriteInfo {
 	// Fields
 		// DONE [KM]: Add private class fields to store x, y (use Vector2D for this) and tag (String) values given in class constructor
 	
@@ -11,7 +11,7 @@ public class spriteInfo {
 	private String tag;
 	
 	// Constructor
-	public spriteInfo(/*Vector2D v2d,*/ String tag){
+	public SpriteInfo(/*Vector2D v2d,*/ String tag){
 		// Done: Save the constructor parameters into class fields
 		this.setTag(tag);
 		//[KM] me being lazy and having forethought I already created a vector2D constructor for direct clones.

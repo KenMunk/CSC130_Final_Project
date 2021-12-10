@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.HashMap;
 
-import Data.spriteInfo;
+import Data.SpriteInfo;
 import Data.Vector2D;
 import logic.Control;
 import timer.stopWatchX;
