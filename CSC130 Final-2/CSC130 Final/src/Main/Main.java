@@ -1,7 +1,7 @@
 package Main;
 
 import java.awt.Color;
-//import java.awt.Toolkit;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.HashMap;
@@ -14,11 +14,11 @@ import FileIO.EZFileRead;
 
 public class Main{
 	// Fields (Static) below...
+
 	public static stopWatchX frameTimer = new stopWatchX(140);
-	public static stopWatchX lineTimer = new stopWatchX(3000);
 	
-	public static Vector2D displayDimensions;
-	public static int cursor;
+	/*// All of the stuff from the checkpoints
+	public static stopWatchX lineTimer = new stopWatchX(3000);
 	
 	public static ArrayList<spriteInfo> sprites = new ArrayList<>();
 	
@@ -28,6 +28,9 @@ public class Main{
 	public static StringTokenizer tokenizer;
 	public static String key, value;
 	public static int dodoCursor = 1;
+	//*/
+	
+	public static Vector2D displayDimensions;
 	
 	//Added 2021-11-28
 	public static String trigger = "";
@@ -57,11 +60,17 @@ public class Main{
 		
 		//totalTraversal = 1536,-100
 		
-		displayDimensions = new Vector2D(1280,720);
+		int displayWidth = (int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+		int displayHeight = (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+		displayDimensions = new Vector2D(displayWidth,displayHeight);
+		/*
 		Vector2D totalTraversal = new Vector2D(1536,-480);
 		Vector2D traversal = new Vector2D(-128,580);
 		int stepsTraversed = 160;
+		//*/
 		
+		
+		/*
 		cursor = 0;
 
 		sprites.add(new spriteInfo(traversal,String.format("d%d", 0)));
@@ -80,11 +89,12 @@ public class Main{
 			value = tokenizer.nextToken();
 			
 			dodoLines.put(key, value);
-		}
+		}//*/
 	}
 	
 	/* This is your access to the "game loop" (It is a "callback" method from the Control class (do NOT modify that class!))*/
 	public static void update(Control ctrl) {
+		/*
 		// TODO: This is where you can code! (Starting code below is just to show you how it works)
 		//int displayWidth = (int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
 		//int displayHeight = (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
@@ -104,7 +114,7 @@ public class Main{
 		
 		spriteInfo displaySprite = sprites.get(cursor);
 		ctrl.addSpriteToFrontBuffer(displaySprite.getCoords().getX(), displaySprite.getCoords().getY(), displaySprite.getTag());
-		//ctrl.addSpriteToFrontBuffer(720,480, displaySprite.getTag());
+		ctrl.addSpriteToFrontBuffer(720,480, displaySprite.getTag());
 		
 		ctrl.addSpriteToFrontBuffer((displayDimensions.getX()/2)-64, displayDimensions.getY()-170, "f0");						 				// Add a tester sprite to render list by tag (Remove later! Test only!)
 		ctrl.drawString((displayDimensions.getX()/2)-180, displayDimensions.getY()-20, String.format("Kenneth Munk says 'Should render %s at %s'",displaySprite.getTag(),displaySprite.getCoords().toString()), customColor);		// Test drawing text on screen where you want (Remove later! Test only!)
@@ -114,6 +124,11 @@ public class Main{
 		if(!dodoLines.isEmpty()) {
 			ctrl.drawString(100, 250, dodoLines.get(String.format("line%d", dodoCursor)), customColor);	
 		}
+		///* */
+		
+		
+		
+		 
 		
 	}
 	

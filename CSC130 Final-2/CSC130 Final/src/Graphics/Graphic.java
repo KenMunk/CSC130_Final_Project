@@ -100,7 +100,13 @@ public class Graphic extends JFrame{
 		gd.setFullScreenWindow(this);
 		DisplayMode[] dms = gd.getDisplayModes();
 		boolean isSupported = false;
-		int vindexN3 = isSupported(1280, 720, 32, dms);
+		
+		//Added 2021-12-09 -- Code to enable native support for other display sizes
+		int displayWidth = (int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+		int displayHeight = (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+		
+		//Display sizing
+		int vindexN3 = isSupported(displayWidth, displayHeight, 32, dms);
 		if(vindexN3 != -1){			// 720p supported
 			_dm = dms[vindexN3]; 
 			isSupported = true;
