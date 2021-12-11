@@ -65,12 +65,17 @@ public class CollisionBox {
 		return(output);
 	}
 	
+	public Vector2D getPosition(Vector2D adjustment) {
+		Vector2D outputPosition = new Vector2D(this.position);
+		outputPosition.adjust(adjustment);
+		return(outputPosition);
+	}
+	
 	public Vector2D getLengths() {
 		Vector2D output = this.lengths;
 		return(output);
 		
 	}
-	
 	
 	public Vector2D getAnchor() {
 		Vector2D output = this.anchor;
@@ -78,14 +83,26 @@ public class CollisionBox {
 	}
 	
 	public Vector2D lowerBound() {
-		int lowerX = this.position.getX() - this.lengths.getX()*(this.anchor.getX()-1);
-		int lowerY = this.position.getY() - this.lengths.getY()*(this.anchor.getY()-1);
+		int lowerX = this.getPosition().getX() - this.lengths.getX()*(this.anchor.getX()-1);
+		int lowerY = this.getPosition().getY() - this.lengths.getY()*(this.anchor.getY()-1);
+		return(new Vector2D(lowerX, lowerY));
+	}
+	
+	public Vector2D lowerBound(Vector2D adjustment) {
+		int lowerX = this.getPosition(adjustment).getX() - this.lengths.getX()*(this.anchor.getX()-1);
+		int lowerY = this.getPosition(adjustment).getY() - this.lengths.getY()*(this.anchor.getY()-1);
 		return(new Vector2D(lowerX, lowerY));
 	}
 	
 	public Vector2D upperBound() {
-		int lowerX = this.position.getX() + this.lengths.getX()*(this.anchor.getX());
-		int lowerY = this.position.getY() + this.lengths.getY()*(this.anchor.getY());
+		int lowerX = this.getPosition().getX() + this.lengths.getX()*(this.anchor.getX());
+		int lowerY = this.getPosition().getY() + this.lengths.getY()*(this.anchor.getY());
+		return(new Vector2D(lowerX, lowerY));
+	}
+
+	public Vector2D upperBound(Vector2D adjustment) {
+		int lowerX = this.getPosition(adjustment).getX() + this.lengths.getX()*(this.anchor.getX());
+		int lowerY = this.getPosition(adjustment).getY() + this.lengths.getY()*(this.anchor.getY());
 		return(new Vector2D(lowerX, lowerY));
 	}
 	
@@ -95,6 +112,17 @@ public class CollisionBox {
 		
 		boolean xCollides = (this.lowerBound().getX() <= coordinate.getX()) && (coordinate.getX() <= this.upperBound().getX()); 
 		boolean yCollides = (this.lowerBound().getY() <= coordinate.getY()) && (coordinate.getY() <= this.upperBound().getY()); 
+		
+		output = xCollides && yCollides;
+		
+		return(output);
+	}
+	
+	public boolean coordinateCollides(Vector2D coordinate, Vector2D adjustment) {
+		boolean output = false;
+		
+		boolean xCollides = (this.lowerBound(adjustment).getX() <= coordinate.getX()) && (coordinate.getX() <= this.upperBound(adjustment).getX()); 
+		boolean yCollides = (this.lowerBound(adjustment).getY() <= coordinate.getY()) && (coordinate.getY() <= this.upperBound(adjustment).getY()); 
 		
 		output = xCollides && yCollides;
 		
@@ -112,6 +140,15 @@ public class CollisionBox {
 		return(output);
 	}
 	
-	
+	public boolean collisionDetected(CollisionBox boundingBox, Vector2D adjustment) {
+		boolean output = false;
+		
+		boolean boxCollides = (this.coordinateCollides(boundingBox.upperBound(),adjustment) || this.coordinateCollides(boundingBox.lowerBound(),adjustment));
+		boolean thisCollides = (boundingBox.coordinateCollides(this.lowerBound(adjustment)) || boundingBox.coordinateCollides(this.upperBound(adjustment)));
+		
+		output = boxCollides || thisCollides;
+		
+		return(output);
+	}
 	
 }
