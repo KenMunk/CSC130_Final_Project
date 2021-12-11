@@ -7,6 +7,11 @@ public class Vector2D {
 	private int x,y;
 	
 	// Constructor
+	public Vector2D() {
+		this.x = 0;
+		this.y = 0;
+	}
+	
 	public Vector2D(int x, int y){
 		int tempX = x;
 		int tempY = y;
