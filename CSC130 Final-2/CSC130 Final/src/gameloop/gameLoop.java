@@ -51,7 +51,7 @@ public class gameLoop{
 	            try {
 	               g = _gph.getGraph();
 	               g.clearRect(0, 0, _gph.getWidth(), _gph.getHeight());
-	               g.setColor(Color.blue);
+	               g.setColor(new Color(0,120,215));
 	               g.fillRect(0, 0, _gph.getWidth(), _gph.getHeight());
 	               Renderer.render(g, _gs, _sps, _overlays, _alpha, _isFade);
 	            } finally {
