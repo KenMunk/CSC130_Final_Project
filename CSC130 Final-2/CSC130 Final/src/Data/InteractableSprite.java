@@ -2,18 +2,18 @@ package Data;
 
 import java.util.ArrayList;
 
-public class MovableSprite {
+public class InteractableSprite {
 	
 	private int frame;
 	private ArrayList<SpriteInfo> spriteFrames;
 	private boolean collisionDetectionEnabled;
-	private CollisionBox collider;
+	private CollisionCollection colliders;
 	
-	public MovableSprite() {
+	public InteractableSprite() {
 		this.setDefaults();
 	}
 
-	public MovableSprite(ArrayList<SpriteInfo> spriteFrames) {
+	public InteractableSprite(ArrayList<SpriteInfo> spriteFrames) {
 		this.setDefaults();
 		this.setSpriteFrames(spriteFrames);
 	}
@@ -32,21 +32,18 @@ public class MovableSprite {
 		}
 	}
 	
-	public void setcollider(CollisionBox collider) {
-		CollisionBox tempcollider = collider;
-		this.collider = tempcollider;
-	}
-	
-	public void setBoundingLengths(Vector2D lengths) {
-		this.collider.setLengths(lengths);
-	}
-	
-	public void setBoundingAnchor(Vector2D anchor) {
-		this.collider.setAnchor(anchor);
+	public void addColliders(ArrayList<CollisionBox> colliders) {
+		for(int i = 0; i<colliders.size(); i++) {
+			this.colliders.addCollisionBox(colliders.get(i));
+		}
 	}
 	
 	public void setPosition(Vector2D position) {
-		this.collider.setPosition(position);
+		this.colliders.setPosition(position);
+	}
+	
+	public Vector2D getPosition(Vector2D position) {
+		return(this.colliders.getPosition());
 	}
 	
 	public void setSpriteFrames(ArrayList<SpriteInfo> spriteFrames) {
@@ -57,11 +54,16 @@ public class MovableSprite {
 	public void setDefaults() {
 		this.setFrame(0);
 		this.setSpriteFrames(new ArrayList<SpriteInfo>());
+		this.colliders = new CollisionCollection();
 	}
 	
 	public void addFrame(SpriteInfo frameInfo) {
 		SpriteInfo tempInfo = frameInfo;
 		this.spriteFrames.add(tempInfo);
+	}
+	
+	public CollisionCollection getColliders() {
+		return(this.colliders);
 	}
 	
 	//Outputs
@@ -71,23 +73,12 @@ public class MovableSprite {
 		return(this.spriteFrames.get(this.frame));
 	}
 	
-	public CollisionBox getCollider() {
-		CollisionBox tempOutput = this.collider;
-		return(tempOutput);
-	}
-	
-	public boolean collidesWith(MovableSprite somethingElse) {
-		return(this.collisionDetectionEnabled && this.collider.collisionDetected(somethingElse.getCollider()));
-	}
-	
-	public boolean moveCollides(Vector2D adjustment, MovableSprite somethingElse) {
-		return(this.collisionDetectionEnabled && this.collider.collisionDetected(somethingElse.getCollider(),adjustment));
-	}
-	
-	public void tryMove(Vector2D adjustment) {
-		
-	}
-	
 	//Utilities
-	
+	public boolean collidesWith(InteractableSprite anotherSprite) {
+		boolean output = false;
+		
+		output = this.collisionDetectionEnabled && this.colliders.collidesWith(anotherSprite.getColliders());
+		
+		return(output);
+	}
 }
