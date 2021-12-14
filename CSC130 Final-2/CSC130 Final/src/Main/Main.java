@@ -126,7 +126,8 @@ public class Main{
 		}
 		///* */
 		
-		
+		ctrl.addSpriteToFrontBuffer(10, 10, "oBlock");
+		ctrl.addSpriteToFrontBuffer(10, 10, "refPt");
 		
 		 
 		

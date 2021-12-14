@@ -2,6 +2,8 @@ package Data;
 
 import java.util.ArrayList;
 
+import logic.Control;
+
 public class InteractableSprite {
 	
 	private int frame;
@@ -80,5 +82,9 @@ public class InteractableSprite {
 		output = this.collisionDetectionEnabled && this.colliders.collidesWith(anotherSprite.getColliders());
 		
 		return(output);
+	}
+	
+	public void renderSprite(Control controller) {
+		controller.addSpriteToFrontBuffer(this.colliders.getPosition().getX(), this.colliders.getPosition().getY(), this.spriteFrames.get(this.frame).getTag());
 	}
 }

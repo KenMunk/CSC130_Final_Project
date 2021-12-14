@@ -41,3 +41,5 @@ Art/QR_Bug--3--06.png*q306
 Art/QR_Bug--3--07.png*q307
 Art/WindowsFrown.png*smile
 Art/WindowsBSODText.png*standardText
+Art/ReferencePoint.png*refPt
+Art/OrientationBlock.png*oBlock
