@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import Data.SpriteInfo;
 import Data.Vector2D;
+import Data.InteractableSprite;
 import logic.Control;
 import timer.stopWatchX;
 import FileIO.EZFileRead;
@@ -29,6 +30,10 @@ public class Main{
 	public static String key, value;
 	public static int dodoCursor = 1;
 	//*/
+	
+	public static InteractableSprite bugPlayer;
+	
+	public static InteractableSprite bsodSmile;
 	
 	public static Vector2D displayDimensions;
 	
@@ -69,6 +74,22 @@ public class Main{
 		int stepsTraversed = 160;
 		//*/
 		
+		ArrayList<SpriteInfo> bsodSmileFrames = new ArrayList<SpriteInfo>();
+		bsodSmileFrames.add(new SpriteInfo("smile"));
+		
+		bsodSmile = new InteractableSprite(bsodSmileFrames);
+		bsodSmile.setPosition(new Vector2D(200,200));
+		
+		ArrayList<SpriteInfo> bugPlayerFrames = new ArrayList<SpriteInfo>();
+		for(int direction = 0; direction < 4; direction++) {
+			for(int frame = 0; frame < 8; frame++) {
+				bugPlayerFrames.add(new SpriteInfo(String.format("q%d0%d", direction, frame)));
+			}
+		}
+		
+		bugPlayer = new InteractableSprite(bugPlayerFrames);
+		bugPlayer.setFrameGroups(4);
+		bugPlayer.setPosition(new Vector2D(100,500));
 		
 		/*
 		cursor = 0;
@@ -129,6 +150,13 @@ public class Main{
 		ctrl.addSpriteToFrontBuffer(10, 10, "oBlock");
 		ctrl.addSpriteToFrontBuffer(10, 10, "refPt");
 		
+		bsodSmile.renderSprite(ctrl);
+		
+		if(frameTimer.isTimeUp()) {
+			frameTimer.resetWatch();
+			bugPlayer.nextFrame();
+		}
+		bugPlayer.renderSprite(ctrl);
 		 
 		
 	}

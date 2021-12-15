@@ -7,6 +7,8 @@ import logic.Control;
 public class InteractableSprite {
 	
 	private int frame;
+	private int frameGroup;
+	private int frameGroups;
 	private ArrayList<SpriteInfo> spriteFrames;
 	private boolean collisionDetectionEnabled;
 	private CollisionCollection colliders;
@@ -25,6 +27,16 @@ public class InteractableSprite {
 	public void setFrame(int frameNumber) {
 		int tempFrame = frameNumber;
 		this.frame = tempFrame;
+	}
+	
+	public void setFrameGroup(int frameGroup) {
+		int tempFrameGroup = frameGroup;
+		this.frameGroup = tempFrameGroup;
+	}
+	
+	public void setFrameGroups(int frameGroups) {
+		int tempFrameGroups = frameGroups;
+		this.frameGroups = tempFrameGroups;
 	}
 	
 	public void enableCollisionDetection(boolean enable) {
@@ -55,6 +67,8 @@ public class InteractableSprite {
 	
 	public void setDefaults() {
 		this.setFrame(0);
+		this.setFrameGroup(0);
+		this.setFrameGroups(1);
 		this.setSpriteFrames(new ArrayList<SpriteInfo>());
 		this.colliders = new CollisionCollection();
 	}
@@ -71,9 +85,12 @@ public class InteractableSprite {
 	//Outputs
 	
 	public SpriteInfo nextFrame() {
-		this.frame = (this.frame + 1)%this.spriteFrames.size();
+		this.frame = (this.frame + 1)%(this.spriteFrames.size());
+		this.frame = (this.frame)%(this.spriteFrames.size()/this.frameGroups);
 		return(this.spriteFrames.get(this.frame));
 	}
+	
+	
 	
 	//Utilities
 	public boolean collidesWith(InteractableSprite anotherSprite) {
