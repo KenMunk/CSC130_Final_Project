@@ -44,3 +44,14 @@ Art/WindowsFrown.png*smile
 Art/WindowsBSODText.png*standardText
 Art/ReferencePoint.png*refPt
 Art/OrientationBlock.png*oBlock
+Art\number--blank.png*n0
+Art\number--0.png*n1
+Art\number--1.png*n2
+Art\number--2.png*n3
+Art\number--3.png*n4
+Art\number--4.png*n5
+Art\number--5.png*n6
+Art\number--6.png*n7
+Art\number--7.png*n8
+Art\number--8.png*n9
+Art\number--9.png*n10

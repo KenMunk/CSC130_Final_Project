@@ -7,9 +7,11 @@ import logic.Control;
 public class InteractableSprite {
 	
 	private int frame;
+	private int hashFrame;
 	private int frameGroup;
 	private int frameGroups;
 	private ArrayList<SpriteInfo> spriteFrames;
+	private ArrayList<String> descriptionHash;
 	private boolean collisionDetectionEnabled;
 	private CollisionCollection colliders;
 	
@@ -78,11 +80,24 @@ public class InteractableSprite {
 		this.setFrameGroups(1);
 		this.setSpriteFrames(new ArrayList<SpriteInfo>());
 		this.colliders = new CollisionCollection();
+		this.descriptionHash = new ArrayList<String>();
 	}
 	
 	public void addFrame(SpriteInfo frameInfo) {
 		SpriteInfo tempInfo = frameInfo;
 		this.spriteFrames.add(tempInfo);
+	}
+	
+	public void addHash(String hash) {
+		this.descriptionHash.add(hash);
+	}
+	
+	public String getDescriptionHash() {
+		return(this.descriptionHash.get(this.hashFrame));
+	}
+	
+	public void nextHashFrame() {
+		this.hashFrame++;
 	}
 	
 	public CollisionCollection getColliders() {
