@@ -16,6 +16,13 @@ public class InteractableSprite {
 	public InteractableSprite() {
 		this.setDefaults();
 	}
+	
+	public InteractableSprite(SpriteInfo spriteFrame) {
+		this.setDefaults();
+		ArrayList<SpriteInfo> tempSprite = new ArrayList<SpriteInfo>();
+		tempSprite.add(spriteFrame);
+		this.setSpriteFrames(tempSprite);
+	}
 
 	public InteractableSprite(ArrayList<SpriteInfo> spriteFrames) {
 		this.setDefaults();

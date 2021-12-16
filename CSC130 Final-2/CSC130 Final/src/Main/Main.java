@@ -31,9 +31,10 @@ public class Main{
 	public static int dodoCursor = 1;
 	//*/
 	
-	public static InteractableSprite bugPlayer;
+	public static ArrayList<InteractableSprite> walls;
+	public static ArrayList<InteractableSprite> interactableObjects;
 	
-	public static InteractableSprite bsodSmile;
+	public static InteractableSprite bugPlayer;
 	
 	public static Vector2D displayDimensions;
 	
@@ -74,11 +75,14 @@ public class Main{
 		int stepsTraversed = 160;
 		//*/
 		
+		interactableObjects = new ArrayList<InteractableSprite>();
+		
 		ArrayList<SpriteInfo> bsodSmileFrames = new ArrayList<SpriteInfo>();
 		bsodSmileFrames.add(new SpriteInfo("smile"));
-		
-		bsodSmile = new InteractableSprite(bsodSmileFrames);
+		InteractableSprite bsodSmile = new InteractableSprite(bsodSmileFrames);
 		bsodSmile.setPosition(new Vector2D(200,200));
+		
+		interactableObjects.add(bsodSmile);
 		
 		ArrayList<SpriteInfo> bugPlayerFrames = new ArrayList<SpriteInfo>();
 		for(int direction = 0; direction < 4; direction++) {
@@ -150,7 +154,9 @@ public class Main{
 		ctrl.addSpriteToFrontBuffer(10, 10, "oBlock");
 		ctrl.addSpriteToFrontBuffer(10, 10, "refPt");
 		
-		bsodSmile.renderSprite(ctrl);
+		for(int i = 0; i<interactableObjects.size(); i++) {
+			interactableObjects.get(i).renderSprite(ctrl);
+		}
 		
 		if(frameTimer.isTimeUp()) {
 			frameTimer.resetWatch();
