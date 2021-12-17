@@ -36,8 +36,12 @@ public class Sprites{
 			if(s == null)			return null;
 			String sTag = s.getTag().toLowerCase();
 			tag = tag.toLowerCase();
-			if(sTag.equals(tag))
-				return s;
+			if(sTag.equals(tag)) {
+				
+				Sprite outputSprite = new Sprite(s);
+				
+				return outputSprite;
+			}
 		}
 		return null;
 	}

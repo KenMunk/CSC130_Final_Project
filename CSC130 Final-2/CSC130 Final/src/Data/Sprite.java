@@ -48,9 +48,11 @@ public class Sprite implements Runnable{
 	}
 	
 	public Sprite(Sprite newSprite){
+		 
 		_x = newSprite.getX();
 		_y = newSprite.getY();
-		_image = deepCopy(newSprite.getSprite());
+		//_image = deepCopy(newSprite.getSprite());
+		_image = newSprite.getSprite();
 		_tag = newSprite.getTag();
 	}
 	
@@ -60,7 +62,7 @@ public class Sprite implements Runnable{
 		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
 		 WritableRaster raster = bi.copyData(null);
 		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
-		}
+	}
 	
 	public String getTag(){
 		return _tag;

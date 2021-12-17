@@ -8,7 +8,7 @@ import timer.stopWatchX;
 public class KeyProcessor{
 	// Static Fields
 	private static char last = ' ';			// For debouncing purposes
-	private static stopWatchX sw = new stopWatchX(250);
+	private static stopWatchX sw = new stopWatchX(10);
 	private static String triggerTemplate = "%s has been triggered";
 	
 	// Static Method(s)
@@ -45,7 +45,7 @@ public class KeyProcessor{
 			Main.trigger = String.format(triggerTemplate, "d");
 			break;
 		case '$':
-			Main.trigger = String.format(triggerTemplate, "space");
+			Main.trigger = String.format(triggerTemplate, "_");
 			break;
 			
 		//End of 2021-11-28 -- Checkpoint 5 Additions
@@ -53,6 +53,11 @@ public class KeyProcessor{
 			// For mouse coordinates
 			Control.isMouseCoordsDisplayed = !Control.isMouseCoordsDisplayed;
 			break;
+		default:
+			Main.trigger = String.format(triggerTemplate, "");
+			break;
 		}
+		
+		
 	}
 }

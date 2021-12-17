@@ -13,7 +13,7 @@ public class CollisionCollection {
 	}
 	
 	public void updatePosition(Vector2D newPosition) {
-		Vector2D tempPosition = newPosition;
+		Vector2D tempPosition = new Vector2D(newPosition);
 		this.position = tempPosition;
 	}
 	

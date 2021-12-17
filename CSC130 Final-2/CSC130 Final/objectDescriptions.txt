@@ -1,1 +1,4 @@
-bsodSmile_1*
+bsodSmile_0*The windows bug is pointing at the windows BSOD frown.
+bsodSmile_1*The windows bug doesn't think the bsod face is very happy.
+bsodSmile_2*The windows bug is wonderin what happened.
+bsodSmile_3*The windows bug doesn't think this is the target.

@@ -9,6 +9,9 @@ import java.util.HashMap;
 import Data.SpriteInfo;
 import Data.Vector2D;
 import Data.InteractableSprite;
+import Data.CollisionBox;
+import Data.CollisionCollection;
+
 import logic.Control;
 import timer.stopWatchX;
 import FileIO.EZFileRead;
@@ -16,7 +19,7 @@ import FileIO.EZFileRead;
 public class Main{
 	// Fields (Static) below...
 
-	public static stopWatchX frameTimer = new stopWatchX(140);
+	public static stopWatchX frameTimer = new stopWatchX(50);
 	
 	/*// All of the stuff from the checkpoints
 	public static stopWatchX lineTimer = new stopWatchX(3000);
@@ -31,12 +34,22 @@ public class Main{
 	public static int dodoCursor = 1;
 	//*/
 	
+	//Game text
+	public static HashMap<String, String> descriptionText = new HashMap<String, String>();
+	
+	//Stuff with colliders
 	public static ArrayList<InteractableSprite> walls;
 	public static ArrayList<InteractableSprite> interactableObjects;
-	
+	public static int[] percentDigitIndicatorIDs = new int[3];
+
+	public static InteractableSprite gameGoal;
 	public static InteractableSprite bugPlayer;
+	public static InteractableSprite idlePlayer;
 	
 	public static Vector2D displayDimensions;
+	
+	public static boolean inputDetected = false;
+	public static boolean isIdle = true;
 	
 	//Added 2021-11-28
 	public static String trigger = "";
@@ -66,34 +79,67 @@ public class Main{
 		
 		//totalTraversal = 1536,-100
 		
+		
+		//display prep
 		int displayWidth = (int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
 		int displayHeight = (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
 		displayDimensions = new Vector2D(displayWidth,displayHeight);
+		
 		/*
 		Vector2D totalTraversal = new Vector2D(1536,-480);
 		Vector2D traversal = new Vector2D(-128,580);
 		int stepsTraversed = 160;
 		//*/
 		
+		//Play Space Prep
 		interactableObjects = new ArrayList<InteractableSprite>();
 		
-		ArrayList<SpriteInfo> bsodSmileFrames = new ArrayList<SpriteInfo>();
-		bsodSmileFrames.add(new SpriteInfo("smile"));
-		InteractableSprite bsodSmile = new InteractableSprite(bsodSmileFrames);
-		bsodSmile.setPosition(new Vector2D(200,200));
+		InteractableSprite bsodSmile = new InteractableSprite(new SpriteInfo("smile"));
+		bsodSmile.setPosition(new Vector2D(100,100));
+		bsodSmile.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(64,128)));
 		
 		interactableObjects.add(bsodSmile);
 		
-		ArrayList<SpriteInfo> bugPlayerFrames = new ArrayList<SpriteInfo>();
-		for(int direction = 0; direction < 4; direction++) {
-			for(int frame = 0; frame < 8; frame++) {
-				bugPlayerFrames.add(new SpriteInfo(String.format("q%d0%d", direction, frame)));
-			}
+		InteractableSprite bsodText = new InteractableSprite(new SpriteInfo("sText"));
+		Vector2D bsodTextPosition = bsodSmile.getPosition();
+		bsodTextPosition.adjustY(128+10);
+		bsodText.setPosition(bsodTextPosition);
+		bsodText.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(61,110)));
+		bsodText.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(700,73)));
+		
+		interactableObjects.add(bsodText);
+		
+		for(int i = 0; i<3; i++) {
+			initializePercentageGraphics(i);
+			
 		}
 		
-		bugPlayer = new InteractableSprite(bugPlayerFrames);
-		bugPlayer.setFrameGroups(4);
-		bugPlayer.setPosition(new Vector2D(100,500));
+		InteractableSprite percentageLabel = new InteractableSprite(new SpriteInfo("pComplete"));
+		Vector2D percentLabelPosition = interactableObjects.get(interactableObjects.size() - 1).getPosition();
+		percentLabelPosition.adjustX(24);
+		percentageLabel.setPosition(percentLabelPosition);
+		percentageLabel.addCollider(new CollisionBox(Vector2D.zero(), new Vector2D(190,42)));
+		
+		interactableObjects.add(percentageLabel);
+		
+		
+		
+		//Walls Pprep
+		
+		
+		//Player prep
+		
+		bugPlayer = new InteractableSprite(new SpriteInfo("qIdle"));
+		bugPlayer.setPosition(new Vector2D(100,450));
+		idlePlayer = new InteractableSprite(new SpriteInfo("qIdle"));
+		idlePlayer.setPosition(new Vector2D(100,450));
+		
+		
+		//GoalPrep
+		
+		gameGoal = new InteractableSprite(new SpriteInfo("goal"));
+		gameGoal.setPosition(new Vector2D(900,200));
+		gameGoal.addCollider(new CollisionBox(new Vector2D(100,100),new Vector2D(56,56)));
 		
 		/*
 		cursor = 0;
@@ -151,22 +197,123 @@ public class Main{
 		}
 		///* */
 		
-		ctrl.addSpriteToFrontBuffer(10, 10, "oBlock");
-		ctrl.addSpriteToFrontBuffer(10, 10, "refPt");
+		//ctrl.addSpriteToFrontBuffer(150, 400, "n1");
+		//ctrl.addSpriteToFrontBuffer(10, 10, "refPt");
 		
 		for(int i = 0; i<interactableObjects.size(); i++) {
 			interactableObjects.get(i).renderSprite(ctrl);
 		}
 		
+		
+		
+		
 		if(frameTimer.isTimeUp()) {
 			frameTimer.resetWatch();
-			bugPlayer.nextFrame();
+			if(inputDetected) {
+				isIdle = false;
+				if(!trigger.equals("")) {
+					Vector2D currentPosition, updatedPosition;
+					currentPosition = bugPlayer.getPosition();
+					updatedPosition = bugPlayer.getPosition();
+					switch(trigger.charAt(0)) {
+					case 'w':
+						bugPlayer.setFrameGroup(0);
+						updatedPosition.adjustY(-10);
+						break;
+					case 'a':
+						bugPlayer.setFrameGroup(3);
+						updatedPosition.adjustX(-10);
+						break;
+					case 's':
+						bugPlayer.setFrameGroup(2);
+						updatedPosition.adjustY(10);
+						break;
+					case 'd':
+						bugPlayer.setFrameGroup(1);
+						updatedPosition.adjustX(10);
+						break;
+					case '_':
+						break;
+					default:
+						break;
+					}
+
+					bugPlayer.setPosition(updatedPosition);
+					boolean collisionDetected = true;
+					
+					//collision detection is broken(/`A)/
+					collisionDetected = collisionDetected && bugPlayer.collidesWith(interactableObjects);
+					
+					if(collisionDetected) {
+						bugPlayer.setPosition(currentPosition);
+					}
+				}
+				else {
+					isIdle = true;
+				}
+				trigger = "";
+				bugPlayer.nextFrame();
+			}
 		}
-		bugPlayer.renderSprite(ctrl);
-		 
+		
+		if(!inputDetected) {
+			if(!trigger.equals("")) {
+				inputDetected = true;
+				
+				ArrayList<SpriteInfo> bugPlayerFrames = new ArrayList<SpriteInfo>();
+				for(int direction = 0; direction < 4; direction++) {
+					for(int frame = 0; frame < 8; frame++) {
+						bugPlayerFrames.add(new SpriteInfo(String.format("q%d0%d", direction, frame)));
+					}
+				}
+				
+				bugPlayer = new InteractableSprite(bugPlayerFrames);
+				bugPlayer.setFrameGroups(4);
+				bugPlayer.enableCollisionDetection(true);
+				bugPlayer.setPosition(new Vector2D(100,450));
+				bugPlayer.addCollider(new CollisionBox(new Vector2D(10,10), new Vector2D(76,76)));
+			}
+			
+		}
+		
+		if(!isIdle) {
+			bugPlayer.renderSprite(ctrl);
+		}
+		else {
+			
+			idlePlayer.setPosition(bugPlayer.getPosition());
+			idlePlayer.renderSprite(ctrl);
+		}
+		
+		gameGoal.renderSprite(ctrl); 
 		
 	}
 	
 	// Additional Static methods below...(if needed)
+	
+	private static void initializePercentageGraphics(int i) {
+		int tempI = i;
+		System.gc();
+
+		InteractableSprite firstDigit = new InteractableSprite();
+		for(int d = 0; d<10; d++) {
+			SpriteInfo tempDigitFrame = new SpriteInfo(String.format("n%d", d));
+			firstDigit.addFrame(tempDigitFrame);
+		}
+		Vector2D numberPosition = new Vector2D(100,366);
+		/*
+		if(i==0) {
+			numberPosition.adjustY(128);
+		}
+		//*/
+		numberPosition.adjustX(24*tempI);
+		firstDigit.setPosition(numberPosition);
+		firstDigit.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(24,42)));
+
+		interactableObjects.add(firstDigit);
+		percentDigitIndicatorIDs[0] = interactableObjects.size() - 1;
+		
+		System.gc();
+	}
 
 }

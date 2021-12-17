@@ -133,6 +133,7 @@ public class CollisionBox {
 		
 		boolean boxCollides = (this.coordinateCollides(boundingBox.upperBound()) || this.coordinateCollides(boundingBox.lowerBound()));
 		boolean thisCollides = (boundingBox.coordinateCollides(this.lowerBound()) || boundingBox.coordinateCollides(this.upperBound()));
+		//boolean thisCollides = false;
 		
 		output = boxCollides || thisCollides;
 		

@@ -1,1 +1,3 @@
 percentComplete :: 190x42
+number :: 24x42
+bsodSmile :: 64x128

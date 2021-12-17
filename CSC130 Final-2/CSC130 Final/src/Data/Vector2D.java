@@ -21,11 +21,18 @@ public class Vector2D {
 	}
 	
 	public Vector2D(Vector2D source) {
-		this.setX(source.getX());
-		this.setY(source.getY());
+		int tempX = source.getX();
+		int tempY = source.getY();
+		this.setX(tempX);
+		this.setY(tempY);
 	}
 	
 	// Methods
+	
+	public static Vector2D zero() {
+		return(new Vector2D(0,0));
+	}
+	
 	private int getValue(int value) {
 		int temp = value;
 		return temp;
