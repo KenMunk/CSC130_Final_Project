@@ -2,6 +2,8 @@
 
 package Data;
 
+import java.lang.Math;
+
 public class Vector2D {
 	// Fields
 	private int x,y;
@@ -39,11 +41,13 @@ public class Vector2D {
 	}
 	
 	public int getX(){
-		return this.getValue(this.x);
+		int tempX = this.x;
+		return tempX;
 	}
 	
 	public int getY(){
-		return this.getValue(this.y);
+		int tempY = this.y;
+		return tempY;
 	}
 	
 	public void setX(int newX){
@@ -75,6 +79,14 @@ public class Vector2D {
 		
 		return(output);
 		
+	}
+	
+	public int distance(Vector2D next) {
+		int xSquare = next.getX()*next.getX();
+		int ySquare = next.getY()*next.getY();
+		double distSquare = (xSquare+ySquare);
+		int dist = (int)Math.sqrt(distSquare);
+		return(dist);
 	}
 	
 	public Vector2D stepsFor(int steps) {

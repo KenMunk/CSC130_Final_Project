@@ -2,3 +2,9 @@ bsodSmile_0*The windows bug is pointing at the windows BSOD frown.
 bsodSmile_1*The windows bug doesn't think the bsod face is very happy.
 bsodSmile_2*The windows bug is wonderin what happened.
 bsodSmile_3*The windows bug doesn't think this is the target.
+windowsGoal_0*This is where you want to go.
+windowsGoal_1*Come closer, closer, no no no, not that way!
+windowsGoal_2*Let the bug enter windows.
+wall_0*You are looking at a the edge of the screen.
+wall_1*Nothing to see here.
+percentage_0*Oh, looks like we have a percentage of completion.

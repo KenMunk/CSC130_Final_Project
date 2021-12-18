@@ -16,6 +16,7 @@ public class gameLoop{
 	BufferedImage _fade;
 	float _alpha;
 	boolean _isFade;
+	public static Color backgroundColor;
 	
 	public gameLoop(Graphic gph, List<gameString> gs, Sprites sps, Sprites overlays){
 		if(gph == null)		throw new NullPointerException();
@@ -25,6 +26,7 @@ public class gameLoop{
 		_overlays = overlays;
 		_isFade = false;
 		_alpha = 0.0f;
+        backgroundColor = new Color(0,120,215);
 	}
 	
 	public void setFade(boolean isFadeOn){
@@ -51,7 +53,7 @@ public class gameLoop{
 	            try {
 	               g = _gph.getGraph();
 	               g.clearRect(0, 0, _gph.getWidth(), _gph.getHeight());
-	               g.setColor(new Color(0,120,215));
+	               g.setColor(backgroundColor);
 	               g.fillRect(0, 0, _gph.getWidth(), _gph.getHeight());
 	               Renderer.render(g, _gs, _sps, _overlays, _alpha, _isFade);
 	            } finally {

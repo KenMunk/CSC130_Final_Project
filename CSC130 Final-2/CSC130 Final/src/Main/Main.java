@@ -15,6 +15,7 @@ import Data.CollisionCollection;
 import logic.Control;
 import timer.stopWatchX;
 import FileIO.EZFileRead;
+import gameloop.gameLoop;
 
 public class Main{
 	// Fields (Static) below...
@@ -26,15 +27,15 @@ public class Main{
 	
 	public static ArrayList<spriteInfo> sprites = new ArrayList<>();
 	
-	public static EZFileRead reader;
 	
 	public static HashMap<String, String> dodoLines = new HashMap<String, String>();
-	public static StringTokenizer tokenizer;
-	public static String key, value;
 	public static int dodoCursor = 1;
 	//*/
 	
 	//Game text
+	public static String key, value;
+	public static StringTokenizer tokenizer;
+	public static EZFileRead reader;
 	public static HashMap<String, String> descriptionText = new HashMap<String, String>();
 	
 	//Stuff with colliders
@@ -43,6 +44,9 @@ public class Main{
 	public static int[] percentDigitIndicatorIDs = new int[3];
 
 	public static InteractableSprite gameGoal;
+	
+	public static String descriptionCursor;
+	public static Vector2D bugPointer;
 	public static InteractableSprite bugPlayer;
 	public static InteractableSprite idlePlayer;
 	
@@ -50,6 +54,9 @@ public class Main{
 	
 	public static boolean inputDetected = false;
 	public static boolean isIdle = true;
+	public static Control ctrl;
+	
+	public static int distancePercentage;
 	
 	//Added 2021-11-28
 	public static String trigger = "";
@@ -59,7 +66,7 @@ public class Main{
 	
 	public static void main(String[] args) {
 		
-		Control ctrl = new Control();				// Do NOT remove!
+		ctrl = new Control();				// Do NOT remove!
 		
 		
 		ctrl.gameLoop();							// Do NOT remove!
@@ -93,19 +100,22 @@ public class Main{
 		
 		//Play Space Prep
 		interactableObjects = new ArrayList<InteractableSprite>();
+		walls = new ArrayList<InteractableSprite>();
 		
 		InteractableSprite bsodSmile = new InteractableSprite(new SpriteInfo("smile"));
 		bsodSmile.setPosition(new Vector2D(100,100));
 		bsodSmile.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(64,128)));
+		//bsodSmile.enableShowBounds(true);
 		
 		interactableObjects.add(bsodSmile);
 		
 		InteractableSprite bsodText = new InteractableSprite(new SpriteInfo("sText"));
-		Vector2D bsodTextPosition = bsodSmile.getPosition();
+		Vector2D bsodTextPosition = new Vector2D(bsodSmile.getPosition());
 		bsodTextPosition.adjustY(128+10);
 		bsodText.setPosition(bsodTextPosition);
 		bsodText.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(61,110)));
 		bsodText.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(700,73)));
+		bsodText.addHash("bsodSmile_2");
 		
 		interactableObjects.add(bsodText);
 		
@@ -115,10 +125,11 @@ public class Main{
 		}
 		
 		InteractableSprite percentageLabel = new InteractableSprite(new SpriteInfo("pComplete"));
-		Vector2D percentLabelPosition = interactableObjects.get(interactableObjects.size() - 1).getPosition();
+		Vector2D percentLabelPosition = new Vector2D(interactableObjects.get(interactableObjects.size() - 1).getPosition());
 		percentLabelPosition.adjustX(24);
 		percentageLabel.setPosition(percentLabelPosition);
 		percentageLabel.addCollider(new CollisionBox(Vector2D.zero(), new Vector2D(190,42)));
+		percentageLabel.addHash("percentage_0");
 		
 		interactableObjects.add(percentageLabel);
 		
@@ -126,12 +137,66 @@ public class Main{
 		
 		//Walls Pprep
 		
+		for(int i = 0; i<= displayDimensions.getX()+16; i += 16) {
+			InteractableSprite boundaryBolt = new InteractableSprite(new SpriteInfo("bolt"));
+			Vector2D boltPosition = new Vector2D(i,0);
+			boundaryBolt.setPosition(boltPosition);
+			boundaryBolt.addCollider(new CollisionBox(Vector2D.zero(), new Vector2D(16,16)));
+			boundaryBolt.addHash("wall_0");
+			boundaryBolt.addHash("wall_1");
+			
+			walls.add(boundaryBolt);
+			
+			InteractableSprite lowerBolt = new InteractableSprite(new SpriteInfo("bolt"));
+			Vector2D lowerPosition = new Vector2D(i, displayDimensions.getY()-16);
+			lowerBolt.setPosition(lowerPosition);
+			lowerBolt.addHash("wall_0");
+			lowerBolt.addHash("wall_1");
+			lowerBolt.addCollider(new CollisionBox(Vector2D.zero(), new Vector2D(16,16)));
+			walls.add(lowerBolt);
+		}
+		
+		for(int i = 16; i<=displayDimensions.getY()-16; i+=16) {
+			InteractableSprite leftBolt, rightBolt;
+			leftBolt = new InteractableSprite(new SpriteInfo("bolt"));
+			rightBolt = new InteractableSprite(new SpriteInfo("bolt"));
+			CollisionBox tempCollisionBox = new CollisionBox(Vector2D.zero(), new Vector2D(16,16));
+			
+			Vector2D leftPosition = new Vector2D(0,i);
+			Vector2D rightPosition = new Vector2D(displayDimensions.getX()-16,i);
+			leftBolt.setPosition(leftPosition);
+			rightBolt.setPosition(rightPosition);
+			
+			leftBolt.addCollider(tempCollisionBox);
+			rightBolt.addCollider(tempCollisionBox);
+			leftBolt.addHash("wall_0");
+			leftBolt.addHash("wall_1");
+			rightBolt.addHash("wall_0");
+			rightBolt.addHash("wall_1");
+			
+			walls.add(leftBolt);
+			walls.add(rightBolt);
+			
+		}
 		
 		//Player prep
 		
-		bugPlayer = new InteractableSprite(new SpriteInfo("qIdle"));
+		ArrayList<SpriteInfo> bugPlayerFrames = new ArrayList<SpriteInfo>();
+		for(int direction = 0; direction < 4; direction++) {
+			for(int frame = 0; frame < 8; frame++) {
+				bugPlayerFrames.add(new SpriteInfo(String.format("q%d0%d", direction, frame)));
+			}
+		}
+		
+		bugPlayer = new InteractableSprite(bugPlayerFrames);
+		bugPlayer.setFrameGroups(4);
+		bugPlayer.enableCollisionDetection(true);
+		bugPlayer.addCollider(new CollisionBox(new Vector2D(10,10), new Vector2D(76,76)));
 		bugPlayer.setPosition(new Vector2D(100,450));
+		//bugPlayer.enableShowBounds(true);
+		
 		idlePlayer = new InteractableSprite(new SpriteInfo("qIdle"));
+		idlePlayer.addCollider(new CollisionBox(new Vector2D(10,10), new Vector2D(76,76)));
 		idlePlayer.setPosition(new Vector2D(100,450));
 		
 		
@@ -140,6 +205,23 @@ public class Main{
 		gameGoal = new InteractableSprite(new SpriteInfo("goal"));
 		gameGoal.setPosition(new Vector2D(900,200));
 		gameGoal.addCollider(new CollisionBox(new Vector2D(100,100),new Vector2D(56,56)));
+		for(int i = 0; i<3; i++) {
+			gameGoal.addHash(String.format("windowsGoal_%d", i));
+		}
+		
+		distancePercentage = 0;
+		
+		reader = new EZFileRead("objectDescriptions.txt");
+		for(int i = 0; i<reader.getNumLines(); i++) {
+			tokenizer = new StringTokenizer(reader.getLine(i), "*");
+			
+			key = tokenizer.nextToken();
+			value = tokenizer.nextToken();
+			
+			descriptionText.put(key, value);
+		}
+		
+		descriptionCursor = "wall_1";
 		
 		/*
 		cursor = 0;
@@ -200,9 +282,6 @@ public class Main{
 		//ctrl.addSpriteToFrontBuffer(150, 400, "n1");
 		//ctrl.addSpriteToFrontBuffer(10, 10, "refPt");
 		
-		for(int i = 0; i<interactableObjects.size(); i++) {
-			interactableObjects.get(i).renderSprite(ctrl);
-		}
 		
 		
 		
@@ -213,8 +292,8 @@ public class Main{
 				isIdle = false;
 				if(!trigger.equals("")) {
 					Vector2D currentPosition, updatedPosition;
-					currentPosition = bugPlayer.getPosition();
-					updatedPosition = bugPlayer.getPosition();
+					currentPosition = new Vector2D(bugPlayer.getPosition());
+					updatedPosition = new Vector2D(bugPlayer.getPosition());
 					switch(trigger.charAt(0)) {
 					case 'w':
 						bugPlayer.setFrameGroup(0);
@@ -233,16 +312,54 @@ public class Main{
 						updatedPosition.adjustX(10);
 						break;
 					case '_':
+						Vector2D bugCenter = bugPlayer.getPosition();
+						bugCenter.adjust(new Vector2D(48,48));
+						descriptionCursor = "null";
+						if(bugPlayer.getFrameGroup() == 0) {
+							bugCenter.adjustY(-96);
+						}
+						else if(bugPlayer.getFrameGroup() == 1) {
+							bugCenter.adjustX(96);
+							
+						}
+						else if(bugPlayer.getFrameGroup() == 2) {
+							bugCenter.adjustY(96);
+							
+						}
+						else if(bugPlayer.getFrameGroup() == 3) {
+							bugCenter.adjustX(-96);
+							
+						}
+						
+						for(int i = 0; i<interactableObjects.size(); i++) {
+							String temp = interactableObjects.get(i).getDescriptionAt(bugCenter);
+							if(!temp.equals("null")) {
+								descriptionCursor = temp;
+							}
+						}
+						for(int i = 0; i<walls.size(); i++) {
+							String temp = walls.get(i).getDescriptionAt(bugCenter);
+							if(!temp.equals("null")) {
+								descriptionCursor = temp;
+							}
+						}
+						
+						String temp = gameGoal.getDescriptionAt(bugCenter);
+						if(!temp.equals("null")) {
+							descriptionCursor = temp;
+						}
+						
 						break;
 					default:
 						break;
 					}
 
 					bugPlayer.setPosition(updatedPosition);
-					boolean collisionDetected = true;
+					boolean collisionDetected = false;
 					
 					//collision detection is broken(/`A)/
-					collisionDetected = collisionDetected && bugPlayer.collidesWith(interactableObjects);
+					collisionDetected = collisionDetected || bugPlayer.collidesWith(interactableObjects);
+					collisionDetected = collisionDetected || bugPlayer.collidesWith(walls);
 					
 					if(collisionDetected) {
 						bugPlayer.setPosition(currentPosition);
@@ -260,18 +377,7 @@ public class Main{
 			if(!trigger.equals("")) {
 				inputDetected = true;
 				
-				ArrayList<SpriteInfo> bugPlayerFrames = new ArrayList<SpriteInfo>();
-				for(int direction = 0; direction < 4; direction++) {
-					for(int frame = 0; frame < 8; frame++) {
-						bugPlayerFrames.add(new SpriteInfo(String.format("q%d0%d", direction, frame)));
-					}
-				}
 				
-				bugPlayer = new InteractableSprite(bugPlayerFrames);
-				bugPlayer.setFrameGroups(4);
-				bugPlayer.enableCollisionDetection(true);
-				bugPlayer.setPosition(new Vector2D(100,450));
-				bugPlayer.addCollider(new CollisionBox(new Vector2D(10,10), new Vector2D(76,76)));
 			}
 			
 		}
@@ -284,9 +390,51 @@ public class Main{
 			idlePlayer.setPosition(bugPlayer.getPosition());
 			idlePlayer.renderSprite(ctrl);
 		}
+
 		
-		gameGoal.renderSprite(ctrl); 
+		gameGoal.renderSprite(ctrl);
 		
+		
+		int distanceToGoal = bugPlayer.getPosition().distance(gameGoal.getPosition())*100;
+		distancePercentage = 100 - ((distanceToGoal/(displayDimensions.getX())));
+		
+		if(bugPlayer.collidesWith(gameGoal)) {
+			gameLoop.backgroundColor = new Color (0,0,100);
+		}
+		else {
+			gameLoop.backgroundColor = new Color(0,120,215);
+		}
+		
+		updatePercentageIndicators();
+
+		//*
+		for(int i = 0; i<interactableObjects.size(); i++) {
+			interactableObjects.get(i).renderSprite(ctrl);
+		}
+		
+		for(int i = 0; i<walls.size(); i++) {
+			walls.get(i).renderSprite(ctrl);
+		}
+		//*/
+		
+		if(!descriptionCursor.isEmpty()) {
+			if(!descriptionText.isEmpty() && descriptionCursor != "null") {
+				ctrl.drawString(256, 500, descriptionText.get(descriptionCursor), new Color(255,255,255));	
+			}
+		}
+	}
+	
+	
+	
+	private static void updatePercentageIndicators() {
+		int[] digit = new int[3];
+		digit[0] = distancePercentage/100;
+		digit[1] = (distancePercentage%100)/10;
+		digit[2] = distancePercentage%10;
+		
+		for(int i = 0; i<3; i++) {
+			interactableObjects.get(percentDigitIndicatorIDs[i]).setFrame(digit[i]);
+		}
 	}
 	
 	// Additional Static methods below...(if needed)
@@ -309,9 +457,10 @@ public class Main{
 		numberPosition.adjustX(24*tempI);
 		firstDigit.setPosition(numberPosition);
 		firstDigit.addCollider(new CollisionBox(Vector2D.zero(),new Vector2D(24,42)));
+		firstDigit.addHash("percentage_0");
 
 		interactableObjects.add(firstDigit);
-		percentDigitIndicatorIDs[0] = interactableObjects.size() - 1;
+		percentDigitIndicatorIDs[i] = interactableObjects.size() - 1;
 		
 		System.gc();
 	}

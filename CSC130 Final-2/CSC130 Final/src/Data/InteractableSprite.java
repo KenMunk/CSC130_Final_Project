@@ -13,6 +13,7 @@ public class InteractableSprite {
 	private ArrayList<SpriteInfo> spriteFrames;
 	private ArrayList<String> descriptionHash;
 	private boolean collisionDetectionEnabled;
+	private boolean showBounds;
 	private CollisionCollection colliders;
 	
 	
@@ -104,6 +105,7 @@ public class InteractableSprite {
 		this.collisionDetectionEnabled = true;
 		this.setFrame(0);
 		this.setFrameGroup(0);
+		this.showBounds = false;
 	}
 	
 	public void addFrame(SpriteInfo frameInfo) {
@@ -117,6 +119,7 @@ public class InteractableSprite {
 	
 	public void nextHashFrame() {
 		this.hashFrame++;
+		this.hashFrame%=this.descriptionHash.size();
 	}
 	
 	public void setHashFrame(int hashFrame) {
@@ -128,6 +131,11 @@ public class InteractableSprite {
 		for(int i = 0; i<hashFrames.size(); i++) {
 			this.descriptionHash.add(hashFrames.get(i));
 		}
+	}
+	
+	public void enableShowBounds(boolean state) {
+		boolean tempState = state;
+		this.showBounds = tempState;
 	}
 	
 	//Outputs
@@ -188,6 +196,17 @@ public class InteractableSprite {
 	}
 	
 	//Utilities
+	public String getDescriptionAt(Vector2D pointer) {
+		if(this.colliders.collidesWith(pointer)) {
+			if(!this.descriptionHash.isEmpty()) {
+				String output = this.getCurrentDescriptionHash();
+				this.nextHashFrame();
+				return(output);	
+			}
+		}
+		return("null");
+	}
+	
 	public boolean collidesWith(InteractableSprite anotherSprite) {
 		boolean output = false;
 		
@@ -197,16 +216,21 @@ public class InteractableSprite {
 	}
 	
 	public boolean collidesWith(ArrayList<InteractableSprite> otherSprites) {
-		boolean output = true;
+		boolean output = false;
 		
 		for(int i = 0; i<otherSprites.size(); i++) {
-			output = output && this.collidesWith(otherSprites.get(i));
+			output = output || this.collidesWith(otherSprites.get(i));
 		}
 		
 		return(output);
 	}
 	
 	public void renderSprite(Control controller) {
+		
 		controller.addSpriteToFrontBuffer(this.colliders.getPosition().getX(), this.colliders.getPosition().getY(), this.spriteFrames.get(this.frame).getTag());
+		
+		if(this.showBounds) {
+			this.colliders.previewBounds();
+		}
 	}
 }

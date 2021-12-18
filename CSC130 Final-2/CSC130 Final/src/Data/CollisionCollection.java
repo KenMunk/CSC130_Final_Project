@@ -22,7 +22,9 @@ public class CollisionCollection {
 	}
 	
 	public Vector2D getPosition() {
-		return(this.position);
+		int x = this.position.getX();
+		int y = this.position.getY();
+		return(new Vector2D(x,y));
 	}
 	
 	public void addCollisionBox(CollisionBox oneBox) {
@@ -46,9 +48,23 @@ public class CollisionCollection {
 	}
 	
 	public CollisionBox getCollider(int id) {
-		CollisionBox outputCollider = this.collisionBoxes.get(id);
-		outputCollider.adjustPositionBy(this.position);
+		CollisionBox tempBox = this.collisionBoxes.get(id);
+		Vector2D localPosition = tempBox.getLocalPosition();
+		localPosition.adjust(this.position);
+		CollisionBox outputCollider = new CollisionBox(localPosition,tempBox.getLengths());
+		//outputCollider.adjustPositionBy(this.position);
 		return(outputCollider);
+	}
+	
+	public boolean collidesWith(Vector2D pointPosition) {
+		boolean output = false;
+		
+		for(int id = 0; id<this.size(); id++) {
+			if(this.getCollider(id).coordinateCollides(pointPosition)) {
+				output = true;
+			}
+		}
+		return(output);
 	}
 	
 	public boolean collidesWith(CollisionBox aCollisionBox) {
@@ -73,6 +89,13 @@ public class CollisionCollection {
 		}
 		
 		return(output);
+	}
+	
+	public void previewBounds() {
+		for(int i = 0; i<this.collisionBoxes.size(); i++) {
+			CollisionBox tempBox = this.collisionBoxes.get(i);
+			tempBox.renderBounds(this.getPosition());
+		}
 	}
 
 }

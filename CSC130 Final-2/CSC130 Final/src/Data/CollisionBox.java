@@ -1,15 +1,12 @@
 package Data;
 
 
+import Main.Main;
+
 public class CollisionBox {
 	
-	private Vector2D anchor;
 	private Vector2D lengths;
 	private Vector2D localPosition;
-	
-	public CollisionBox(Vector2D localPosition, Vector2D anchor, Vector2D lengths) {
-		this.setEverything(localPosition, anchor, lengths);
-	}
 	
 	public CollisionBox(Vector2D localPosition, Vector2D lengths) {
 		this.setDefaults();
@@ -21,28 +18,14 @@ public class CollisionBox {
 	
 	public void setDefaults() {
 		Vector2D defaultValues = new Vector2D();
-		this.setEverything(defaultValues, defaultValues, defaultValues);
+		this.setEverything(defaultValues, defaultValues);
 	}
 	
-	public void setEverything(Vector2D localPosition, Vector2D anchor, Vector2D lengths) {
-		this.setAnchor(anchor);
+	public void setEverything(Vector2D localPosition, Vector2D lengths) {
 		this.setPosition(localPosition);
 		this.setLengths(lengths);
 	}
 	
-	public void setAnchor(Vector2D anchor) {
-		
-		//Forces the anchor points to be 0 or 1s
-		
-		Vector2D tempAnchor = new Vector2D(0,0);
-		if(anchor.getX()>0) {
-			tempAnchor.setX(1);
-		}if(anchor.getY()>0) {
-			tempAnchor.setY(1);
-		}
-		
-		this.anchor = tempAnchor;
-	}
 	
 	public void setLengths(Vector2D lengths) {
 		Vector2D tempLengths = lengths;
@@ -65,44 +48,77 @@ public class CollisionBox {
 	}
 	
 	public Vector2D getPosition(Vector2D referencePosition) {
-		Vector2D outputPosition = new Vector2D(this.localPosition);
-		outputPosition.adjust(referencePosition);
-		return(outputPosition);
+		Vector2D adjustedPosition = new Vector2D(this.localPosition.getX(), this.localPosition.getY());
+		adjustedPosition.adjustX(referencePosition.getX());
+		adjustedPosition.adjustY(referencePosition.getY());				
+		return(adjustedPosition);
 	}
 	
 	public Vector2D getLengths() {
-		Vector2D output = this.lengths;
+		Vector2D output = new Vector2D(this.lengths);
 		return(output);
 		
 	}
 	
-	public Vector2D getAnchor() {
-		Vector2D output = this.anchor;
+	public Vector2D getLocalPosition() {
+		Vector2D output = new Vector2D(this.localPosition);
 		return(output);
 	}
 	
 	public Vector2D lowerBound() {
-		int lowerX = this.getPosition().getX() - this.lengths.getX()*(this.anchor.getX()-1);
-		int lowerY = this.getPosition().getY() - this.lengths.getY()*(this.anchor.getY()-1);
+		int lowerX, lowerY;
+		//*
+		lowerX = this.getPosition().getX();
+		lowerY = this.getPosition().getY();
+		//*/
 		return(new Vector2D(lowerX, lowerY));
 	}
 	
 	public Vector2D lowerBound(Vector2D referencePosition) {
-		int lowerX = this.getPosition(referencePosition).getX() - this.lengths.getX()*(this.anchor.getX()-1);
-		int lowerY = this.getPosition(referencePosition).getY() - this.lengths.getY()*(this.anchor.getY()-1);
-		return(new Vector2D(lowerX, lowerY));
+		//int lowerX, lowerY;
+		/*
+		lowerX = this.getPosition(referencePosition).getX() + this.lengths.getX()*(Math.abs(this.anchor.getX()-1));
+		lowerY = this.getPosition(referencePosition).getY() + this.lengths.getY()*(Math.abs(this.anchor.getX()-1));
+		//*/
+		
+		/*
+		lowerX = this.getPosition(referencePosition).getX() + 100;
+		lowerY = this.getPosition(referencePosition).getY() + 100;
+		//*/
+		
+		Vector2D output = this.lowerBound();
+		
+		output.adjust(referencePosition);
+		
+		//return(new Vector2D(lowerX, lowerY));
+		
+		return(output);
 	}
 	
 	public Vector2D upperBound() {
-		int lowerX = this.getPosition().getX() + this.lengths.getX()*(this.anchor.getX());
-		int lowerY = this.getPosition().getY() + this.lengths.getY()*(this.anchor.getY());
-		return(new Vector2D(lowerX, lowerY));
+		int upperX, upperY;
+		//*
+		upperX = this.getPosition().getX() + this.lengths.getX();
+		upperY = this.getPosition().getY() + this.lengths.getY();
+		//*/
+		
+		return(new Vector2D(upperX, upperY));
 	}
 
 	public Vector2D upperBound(Vector2D referencePosition) {
-		int lowerX = this.getPosition(referencePosition).getX() + this.lengths.getX()*(this.anchor.getX());
-		int lowerY = this.getPosition(referencePosition).getY() + this.lengths.getY()*(this.anchor.getY());
-		return(new Vector2D(lowerX, lowerY));
+		/*
+		int upperX, upperY;
+		//*
+		upperX = this.getPosition().getX() + referencePosition.getX() + this.lengths.getX();
+		upperY = this.getPosition(referencePosition).getY() + this.lengths.getY();
+		//*/
+		
+		Vector2D output = this.upperBound();
+		output.adjust(referencePosition);
+		
+		return(output);
+		
+		//return(new Vector2D(upperX, upperY));
 	}
 	
 	//CollisionDetection
@@ -131,8 +147,19 @@ public class CollisionBox {
 	public boolean collisionDetected(CollisionBox boundingBox) {
 		boolean output = false;
 		
+		Vector2D boundingBoxOppUpper, boundingBoxOppLower;
+		Vector2D thisOppUpper, thisOppLower;
+		
+		boundingBoxOppUpper = new Vector2D(boundingBox.upperBound().getX(),boundingBox.lowerBound().getY());
+		boundingBoxOppLower = new Vector2D(boundingBox.lowerBound().getX(),boundingBox.upperBound().getY());
+		thisOppUpper = new Vector2D(this.upperBound().getX(), this.lowerBound().getY());
+		thisOppLower = new Vector2D(this.lowerBound().getX(), this.upperBound().getY());
+		
 		boolean boxCollides = (this.coordinateCollides(boundingBox.upperBound()) || this.coordinateCollides(boundingBox.lowerBound()));
+		boxCollides = boxCollides || (this.coordinateCollides(boundingBoxOppLower) || this.coordinateCollides(boundingBoxOppUpper));
 		boolean thisCollides = (boundingBox.coordinateCollides(this.lowerBound()) || boundingBox.coordinateCollides(this.upperBound()));
+		thisCollides = thisCollides || (boundingBox.coordinateCollides(thisOppLower));
+		thisCollides = thisCollides || (boundingBox.coordinateCollides(thisOppUpper));
 		//boolean thisCollides = false;
 		
 		output = boxCollides || thisCollides;
@@ -149,6 +176,17 @@ public class CollisionBox {
 		output = boxCollides || thisCollides;
 		
 		return(output);
+	}
+	
+	public void renderBounds(Vector2D referencePosition) {
+		Vector2D boundLower = this.lowerBound(referencePosition);
+		Main.ctrl.addSpriteToFrontBuffer(this.getPosition(referencePosition).getX(), this.getPosition(referencePosition).getY(), "refPt");
+		Main.ctrl.addSpriteToFrontBuffer(boundLower.getX(), boundLower.getY(), "bound_upper");
+		//Main.ctrl.addSpriteToFrontBuffer(100, 100, "bound_lower");
+		Vector2D boundUpper = this.upperBound(referencePosition);
+		boundUpper.adjust(new Vector2D(-3,-3));
+		Main.ctrl.addSpriteToFrontBuffer(boundUpper.getX(), boundUpper.getY(), "bound_lower");
+		//Main.ctrl.addSpriteToFrontBuffer(200, 200, "bound_upper");
 	}
 	
 }

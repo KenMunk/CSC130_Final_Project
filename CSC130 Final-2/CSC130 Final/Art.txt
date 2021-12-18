@@ -1,3 +1,5 @@
+Art\zBoundRef_Lower.png*bound_lower
+Art\zBoundRef_Upper.png*bound_upper
 Art/f.png*f0
 Art/SpecWalker--00.png*d0
 Art/SpecWalker--01.png*d1
@@ -57,3 +59,4 @@ Art\number--8.png*n8
 Art\number--9.png*n9
 Art\percentComplete.png*pComplete
 Art\WindowsIcon.png*goal
+Art\BoundryBolt.png*bolt
